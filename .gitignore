@@ -1,4 +1,4 @@
 **.ds_store
 .vscode/c_cpp_properties.json
-*out.exe
+**out.exe
 **/build/
