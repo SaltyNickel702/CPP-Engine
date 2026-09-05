@@ -27,6 +27,7 @@ int main () {
 	t.permanent.store(true);
 	t.preferedPriority.store(1);
 	t.f = [&]() {
+		if (glfwGetKey(r.window,GLFW_KEY_ESCAPE)) r.running = false;
 		if (!rect.isLoaded()) return;
 
 		glUseProgram(sh.ID);
