@@ -25,6 +25,7 @@ int main () {
 
 	Render::Camera::Perspective cam;
 	cam.pos = glm::vec3(0,0,-1);
+	// cam.rot*= glm::angleAxis(glm::radians(180.0f), glm::vec3(0,1,0)); 
 	cam.fov = 70;
 	cam.near = 0.1f;
 	cam.far = 10.0f;

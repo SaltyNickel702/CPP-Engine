@@ -264,6 +264,11 @@ void Render::TickFunc::pull () {
 
 
 #pragma region Camera
+Render::Camera::Camera () {
+	rot = glm::quatLookAt(glm::vec3(0,0,1),glm::vec3(0,1,0));
+	pos = glm::vec3(0);
+}
+
 glm::mat4 Render::Camera::getTransform() {
 	glm::mat4 viewRot = glm::mat4_cast(glm::conjugate(rot));
 	glm::mat4 viewTransl = glm::translate(glm::mat4(1.0f), -pos);
@@ -275,7 +280,7 @@ glm::mat4 Render::Camera::getPerspective () {
 }
 
 glm::mat4 Render::Camera::Perspective::getPerspective () {
-	return glm::perspective(fov, aspectRatio, near, far);
+	return glm::perspective(glm::radians(fov), aspectRatio, near, far);
 }
 glm::mat4 Render::Camera::Orthographic::getPerspective () {
 	return glm::ortho(left,right,bottom,top,near,far);

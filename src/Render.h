@@ -134,6 +134,8 @@ struct Render { // OpenGL window instance
 
 	// MARK: Camera
 	struct Camera {
+		Camera();
+
 		glm::vec3 pos;
 		glm::quat rot;
 
