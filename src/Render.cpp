@@ -6,6 +6,7 @@
 #include <format>
 #include <chrono>
 #include <ctime>
+#include <glm/gtc/matrix_transform.hpp>
 
 
 using namespace std;
@@ -118,6 +119,8 @@ Render::Mesh::Mesh (Render& r) : Asset(r) {
 	vertL = 0;
 	indL = 0;
 	attrL = 0;
+
+	scale = glm::vec3(1);
 }
 void Render::Mesh::updateBuffer() {
 	TickFunc* t = new TickFunc(render);
@@ -229,6 +232,14 @@ void Render::Mesh::vertexComp(vector<unsigned int> v) {
 	lock_guard<mutex> lock(vectorMutex);
 	attrV = v;
 }
+
+glm::mat4 Render::Mesh::getTransform() {
+	glm::mat4 transl = glm::translate(glm::mat4(1.0f), pos);
+	glm::mat4 rotMat = glm::mat4_cast(rot);
+	glm::mat4 scaleMat = glm::scale(glm::mat4(1.0f),scale);
+
+	return transl * rotMat * scaleMat;
+}
 #pragma endregion
 
 
@@ -248,6 +259,26 @@ void Render::TickFunc::pull () {
 		lock_guard<mutex> lock(render.removeTickMutex);
 		render.removeFromTick.push_back(this);
 	}
+}
+#pragma endregion
+
+
+#pragma region Camera
+glm::mat4 Render::Camera::getTransform() {
+	glm::mat4 viewRot = glm::mat4_cast(glm::conjugate(rot));
+	glm::mat4 viewTransl = glm::translate(glm::mat4(1.0f), -pos);
+
+	return viewRot * viewTransl;
+}
+glm::mat4 Render::Camera::getPerspective () {
+	return glm::mat4(1.0f);
+}
+
+glm::mat4 Render::Camera::Perspective::getPerspective () {
+	return glm::perspective(fov, aspectRatio, near, far);
+}
+glm::mat4 Render::Camera::Orthographic::getPerspective () {
+	return glm::ortho(left,right,bottom,top,near,far);
 }
 #pragma endregion
 
@@ -283,6 +314,7 @@ void Render::Scene::addAsset (Asset* a) {
 	if (it == assets.end()) assets.push_back(a);
 }
 void Render::Scene::removeAsset (Asset* a) {
+	a->unload();
 	auto it = find(assets.begin(), assets.end(), a);
 	if (it != assets.end()) assets.erase(it);
 }

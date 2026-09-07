@@ -23,6 +23,13 @@ int main () {
 	});
 	rect.updateBuffer();
 
+	Render::Camera::Perspective cam;
+	cam.pos = glm::vec3(0,0,-1);
+	cam.fov = 70;
+	cam.near = 0.1f;
+	cam.far = 10.0f;
+	cam.aspectRatio = 1800/1200.0f;
+
 	Render::TickFunc t(r);
 	t.permanent.store(true);
 	t.preferedPriority.store(1);
@@ -31,6 +38,9 @@ int main () {
 		if (!rect.isLoaded()) return;
 
 		glUseProgram(sh.ID);
+
+		glUniformMatrix4fv(glGetUniformLocation(sh.ID, "viewMat"), 1, GL_FALSE, glm::value_ptr(cam.getTransform())); 
+		glUniformMatrix4fv(glGetUniformLocation(sh.ID, "screenMat"), 1, GL_FALSE, glm::value_ptr(cam.getPerspective())); 
 
 		glBindVertexArray(rect.VAO);
 		glDrawElements(GL_TRIANGLES, rect.totalIndices(), GL_UNSIGNED_INT, 0);

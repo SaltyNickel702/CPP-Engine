@@ -13,6 +13,7 @@ To run any code inside the render loop, use a TickFunc struct. Set to permanent 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <thread>
 #include <functional>
@@ -60,8 +61,9 @@ struct Render { // OpenGL window instance
 
 		glm::vec3 pos;
 		glm::quat rot;
+		glm::vec3 scale;
 
-		std::string shaderName;
+		glm::mat4 getTransform (); // Use in shader to translate relative vertices to world space
 
 		std::vector<float> vertices();
 		std::vector<unsigned int> indices();
@@ -128,6 +130,32 @@ struct Render { // OpenGL window instance
 
 		private:
 			int curPriority;
+	};
+
+	// MARK: Camera
+	struct Camera {
+		glm::vec3 pos;
+		glm::quat rot;
+
+		virtual glm::mat4 getTransform (); // Returns world transform
+		virtual glm::mat4 getPerspective (); // Returns perspective warp to screen space
+
+		struct Perspective;
+		struct Orthographic;
+	};
+	struct Camera::Perspective : public Camera {
+		float fov;
+		float near, far;
+		float aspectRatio;
+
+		glm::mat4 getPerspective () override;
+	};
+	struct Camera::Orthographic : public Camera {
+		float left, right;
+		float top, bottom;
+		float near, far;
+
+		glm::mat4 getPerspective () override;
 	};
 
 
