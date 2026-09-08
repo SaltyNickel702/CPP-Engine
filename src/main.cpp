@@ -46,7 +46,7 @@ int main () {
 	t.permanent.store(true);
 	t.preferedPriority.store(1);
 	t.f = [&]() {
-		if (glfwGetKey(r.window,GLFW_KEY_ESCAPE)) r.running = false;
+		if (glfwGetKey(r.window,GLFW_KEY_ESCAPE)) r.running.store(false);
 		if (!rect.isLoaded()) return;
 
 		angle+= glm::radians(45.0f) * t.dt();
