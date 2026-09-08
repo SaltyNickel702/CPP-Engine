@@ -61,6 +61,7 @@ int main () {
 		glBindVertexArray(rect.VAO);
 		glDrawElements(GL_TRIANGLES, rect.totalIndices(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
+		glUseProgram(0);
 	};
 
 	s.addAsset(&sh);
