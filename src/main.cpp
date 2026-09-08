@@ -3,6 +3,8 @@
 
 using namespace std;
 
+float angle = 0;
+
 int main () {
 	Render r(1800,1200,"Test");
 	Render::Scene s(string("scene1"),r);
@@ -30,6 +32,15 @@ int main () {
 	cam.near = 0.1f;
 	cam.far = 10.0f;
 	cam.aspectRatio = 1800/1200.0f;
+	// Render::Camera::Orthographic cam;
+	// cam.left = -2;
+	// cam.right = 2;
+	// cam.bottom = -2;
+	// cam.top = 2;
+	// cam.near = -1;
+	// cam.far = 10;
+
+
 
 	Render::TickFunc t(r);
 	t.permanent.store(true);
@@ -37,6 +48,10 @@ int main () {
 	t.f = [&]() {
 		if (glfwGetKey(r.window,GLFW_KEY_ESCAPE)) r.running = false;
 		if (!rect.isLoaded()) return;
+
+		angle+= glm::radians(45.0f) * t.dt();
+		cam.pos = glm::vec3(cos(angle),0,sin(angle));
+		cam.rot = glm::quatLookAt(-cam.pos,glm::vec3(0,1,0));
 
 		glUseProgram(sh.ID);
 
