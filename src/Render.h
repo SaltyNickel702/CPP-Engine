@@ -171,6 +171,8 @@ struct Render { // OpenGL window instance
 		void addAsset(Asset* asset);
 		void removeAsset(Asset* asset);
 
+		std::map<std::string, std::function<void()>> callbacks; // Types: Key, Char, CursorPos, MouseButton, Scroll, Drop, WindowPos
+
 		void loadScene();
 		void unloadScene();
 		std::function<void()> loadFunc = [](){}; // Any additional code that must execute before scene loading

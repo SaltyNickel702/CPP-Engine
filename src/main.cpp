@@ -7,7 +7,7 @@ float angle = 0;
 
 int main () {
 	Render r(1800,1200,"Test");
-	Render::Scene s(string("scene1"),r);
+	Render::Scene s("scene1",r);
 
 	Render::Shader sh("vert.glsl","frag.glsl",r);
 	
@@ -51,7 +51,7 @@ int main () {
 
 		angle+= glm::radians(45.0f) * t.dt();
 		cam.pos = glm::vec3(cos(angle),0,sin(angle));
-		cam.rot = glm::quatLookAt(-cam.pos,glm::vec3(0,1,0));
+		cam.rot = glm::quatLookAtLH(-cam.pos,glm::vec3(0,1,0));
 
 		glUseProgram(sh.ID);
 

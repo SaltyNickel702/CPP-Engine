@@ -353,6 +353,53 @@ Render::Render (int w, int h, string t) : title(t) {
 
 	Thread = new thread(&Render::init,this);
 }
+
+namespace Callbacks {
+	void Key(GLFWwindow* window, int key, int scancode, int action, int mods) {
+		Render* r = static_cast<Render*>(glfwGetWindowUserPointer(window));
+		Render::Scene* s = r->scenes.at(r->getScene());
+		map<string,function<void()>> cbs = s->callbacks;
+		if (cbs.contains("Key")) {
+			cbs.at("Key")();
+		}
+	}
+	void Char(GLFWwindow* window, unsigned int codepoint) {
+		Render* r = static_cast<Render*>(glfwGetWindowUserPointer(window));
+		Render::Scene* s = r->scenes.at(r->getScene());
+		map<string,function<void()>> cbs = s->callbacks;
+		if (cbs.contains("Char")) cbs.at("Char")();
+	}
+	void CursorPos(GLFWwindow* window, double xpos, double ypos) {
+		Render* r = static_cast<Render*>(glfwGetWindowUserPointer(window));
+		Render::Scene* s = r->scenes.at(r->getScene());
+		map<string,function<void()>> cbs = s->callbacks;
+		if (cbs.contains("CursorPos")) cbs.at("CursorPos")();
+	}
+	void MouseButton(GLFWwindow* window, int button, int action, int mods) {
+		Render* r = static_cast<Render*>(glfwGetWindowUserPointer(window));
+		Render::Scene* s = r->scenes.at(r->getScene());
+		map<string,function<void()>> cbs = s->callbacks;
+		if (cbs.contains("MouseButton")) cbs.at("MouseButton")();
+	}
+	void Scroll(GLFWwindow* window, double xoffset, double yoffset) {
+		Render* r = static_cast<Render*>(glfwGetWindowUserPointer(window));
+		Render::Scene* s = r->scenes.at(r->getScene());
+		map<string,function<void()>> cbs = s->callbacks;
+		if (cbs.contains("Scroll")) cbs.at("Scroll")();
+	}
+	void Drop(GLFWwindow* window, int pathCount, const char* paths[]) {
+		Render* r = static_cast<Render*>(glfwGetWindowUserPointer(window));
+		Render::Scene* s = r->scenes.at(r->getScene());
+		map<string,function<void()>> cbs = s->callbacks;
+		if (cbs.contains("Drop")) cbs.at("Drop")();
+	}
+	void WindowPos(GLFWwindow* window, int xpos, int ypos) {
+		Render* r = static_cast<Render*>(glfwGetWindowUserPointer(window));
+		Render::Scene* s = r->scenes.at(r->getScene());
+		map<string,function<void()>> cbs = s->callbacks;
+		if (cbs.contains("WindowPos")) cbs.at("WindowPos")();
+	}
+};
 void Render::init () {
 	// Initialize GLFW
 	if (!glfwInit()) {
@@ -381,6 +428,15 @@ void Render::init () {
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		throw runtime_error("Failed to initialize GLAD");
 	}
+
+	glfwSetWindowUserPointer(window, this);
+	glfwSetKeyCallback(window,Callbacks::Key);
+	glfwSetCharCallback(window,Callbacks::Char);
+	glfwSetCursorPosCallback(window,Callbacks::CursorPos);
+	glfwSetMouseButtonCallback(window,Callbacks::MouseButton);
+	glfwSetScrollCallback(window,Callbacks::Scroll);
+	glfwSetDropCallback(window,Callbacks::Drop);
+	glfwSetWindowPosCallback(window,Callbacks::WindowPos);
 
 	running.store(true);
 
